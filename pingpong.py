@@ -1,7 +1,8 @@
 from pygame import *
 clock = time.Clock()
-speed_x = 3
-speed_y = 3
+score = 0
+speed_x = 4
+speed_y = 4
 window = display.set_mode((700, 500))
 background = transform.scale(
     image.load('табл.webp'),
@@ -73,35 +74,48 @@ class Player(GameSprite):
 
 
 roket = Player('rocet.png', 15, 400, 5)
-ball = Ball('шарик.png', 499 , 100, 5)
+ball = Ball('ball.png', 499 , 100, 5)
 w1 = Wall(240, 247, 247, 600, 100 , 10, 230)
+w2 = Wall(240, 247, 247, 400, 300 , 20, 20)
+w3 = Wall(240, 247, 247, 400, 500 , 20, 20)
+
+
+
 
 
 font.init()
 font1 = font.SysFont('Arial', 36)
 font2 = font.SysFont('Arial', 80)
-# 9, 56, 224,
+
 font1 = font.Font(None, 35)
 lose1 = font1.render('PLAYER LOSE!', True, (180, 0, 0))
 
 game = True
 finish = False
 while game:
-
+    text = font1.render('Счет: ' + str(score), 1, (255, 0, 0))
 
 
     if not finish:
         window.blit(background, (0, 0))
+        window.blit(text, (10, 38))
         w1.draw_wall()
+        w2.draw_wall()
+        w3.draw_wall()
         roket.update()
         roket.reset()
         ball.update()
         ball.reset()
         w1.update()
-        # w1.reset()
+        w2.update()
+        w3.update()
     if ball.rect.x < 0:
         finish = True
         window.blit(lose1, (200, 200))
+
+    if ball.rect.x == 700:
+        finish = False
+        speed_x *= -1
 
     if sprite.collide_rect(roket, ball):
         speed_x *= -1
@@ -109,12 +123,24 @@ while game:
     if sprite.collide_rect(w1, ball):
         speed_x *= -1
 
+    if sprite.collide_rect(w2, ball):
+        speed_x *= -1
 
+    if sprite.collide_rect(w3, ball):
+        speed_x *= -1
+
+    if sprite.collide_rect(ball, roket):
+        score = score + 1
+
+    
 
     for e in event.get():
         if e.type == QUIT:
             game = False
 
+
+    if score >= 16:
+        finish = True
     clock.tick(60)
     display.update()
 
